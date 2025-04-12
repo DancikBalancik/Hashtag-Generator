@@ -39,7 +39,6 @@ git clone https://github.com/DancikBalancik/Hashtag-Generator.git
 cd Hashtag Generator
 
 # Install dependencies
-# Note: There are no dependencies for now.
 pip install -r requirements.txt
 
 # Run the application
