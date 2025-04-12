@@ -17,10 +17,11 @@ def build_macos():
         "pyinstaller",
         "--name=HashtagGenerator",
         "--windowed",
+        "--onefile",
         "--icon=assets/icons/app_icon.icns",
         "--add-data=assets:assets",
         "--osx-bundle-identifier=com.hashtaggenerator.app",
-        "src\gui\main.py"
+        "src/gui/main.py"
     ], check=True)
     
     # Update Info.plist with additional metadata
@@ -30,7 +31,7 @@ def build_macos():
     with open(info_plist_path, 'rb') as f:
         info_plist = plistlib.load(f)
     
-    # Update with your app-specific information
+    # Update with app-specific information
     info_plist.update({
         'CFBundleShortVersionString': version,
         'CFBundleVersion': version,
@@ -43,9 +44,7 @@ def build_macos():
     
     print("macOS build completed successfully!")
     
-    # Optional: Create DMG file
-    # This requires create-dmg:
-    # brew install create-dmg
+    # Optional: Create DMG file (requires create-dmg)
     try:
         print("Creating DMG installer...")
         subprocess.run([

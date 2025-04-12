@@ -16,9 +16,10 @@ def build_linux():
         "pyinstaller",
         "--name=hashtag-generator",
         "--windowed",
+        "--onefile",
         "--icon=assets/icons/app_icon.png",
         "--add-data=assets:assets",
-        "src\gui\main.py"
+        "src/gui/main.py"
     ], check=True)
     
     # Create .desktop file for Linux application menus
@@ -34,7 +35,6 @@ Categories=Utility;TextTools;
 Keywords=hashtag;social;text;
 Version={version}
 """
-    
     os.makedirs("dist/linux", exist_ok=True)
     with open("dist/linux/hashtag-generator.desktop", "w") as f:
         f.write(desktop_file)
@@ -50,17 +50,20 @@ Version={version}
         # Create AppDir structure
         appdir = "dist/AppDir"
         ensure_dir(appdir)
+        # Copy the built executable to AppRun
         shutil.copy("dist/hashtag-generator", f"{appdir}/AppRun")
         os.chmod(f"{appdir}/AppRun", 0o755)  # Make executable
+        
+        # Copy the .desktop file and icon into AppDir
         shutil.copy("dist/linux/hashtag-generator.desktop", f"{appdir}/hashtag-generator.desktop")
-        shutil.copy("--icon=assets/icons/app_icon.png", f"{appdir}/.DirIcon")
+        shutil.copy("assets/icons/app_icon.png", f"{appdir}/.DirIcon")
         
-        # Create icons directory in AppDir
-        icons_appdir = f"{appdir}/usr/share/icons/hicolor/256x256/apps"
+        # Create icons directory in AppDir and copy icon there
+        icons_appdir = os.path.join(appdir, "usr/share/icons/hicolor/256x256/apps")
         os.makedirs(icons_appdir, exist_ok=True)
-        shutil.copy("--icon=assets/icons/app_icon.png", f"{icons_appdir}/hashtag-generator.png")
+        shutil.copy("assets/icons/app_icon.png", f"{icons_appdir}/hashtag-generator.png")
         
-        # Run appimagetool
+        # Run appimagetool to create the AppImage
         subprocess.run([
             "appimagetool",
             appdir,

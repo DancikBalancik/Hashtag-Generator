@@ -3,6 +3,8 @@ import json
 import sys
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
+from pathlib import Path
+
 
 class HashtagGenerator:
     def __init__(self):
@@ -16,6 +18,21 @@ class HashtagGenerator:
         }
         self.history = []
         self.load_settings()
+        
+    def _get_config_dir(self):
+        """Get the appropriate configuration directory based on OS"""
+        home = Path.home()
+        
+        if sys.platform == "win32":
+            config_dir = home / "AppData" / "Local" / "HashtagGenerator"
+        elif sys.platform == "darwin":
+            config_dir = home / "Library" / "Application Support" / "HashtagGenerator"
+        else:  # Linux and other Unix-like
+            config_dir = home / ".config" / "hashtag-generator"
+            
+        # Create config directory if it doesn't exist
+        config_dir.mkdir(parents=True, exist_ok=True)
+        return config_dir
     
     def generate_hashtag(self, text):
         """Transform input text into a hashtag format based on settings"""
@@ -50,10 +67,11 @@ class HashtagGenerator:
     
     def load_settings(self):
         """Load settings from config file if exists, otherwise create one with defaults"""
-        config_path = os.path.join(os.path.dirname(__file__), "config.json")
-        history_path = os.path.join(os.path.dirname(__file__), "history.json")
+        config_dir = self._get_config_dir()
+        config_path = config_dir / "config.json"
+        history_path = config_dir / "history.json"
         
-        if not os.path.exists(config_path):
+        if not config_path.exists():
             # Create config file with default settings
             with open(config_path, "w") as f:
                 json.dump(self.settings, f)
@@ -65,7 +83,7 @@ class HashtagGenerator:
                 pass
                 
         # Load history if exists, otherwise create an empty one
-        if not os.path.exists(history_path):
+        if not history_path.exists():
             with open(history_path, "w") as f:
                 json.dump(self.history, f)
         else:
@@ -74,11 +92,12 @@ class HashtagGenerator:
                     self.history = json.load(f)
             except:
                 self.history = []
-    
+
     def save_settings(self):
         """Save settings and history to their respective files"""
-        config_path = os.path.join(os.path.dirname(__file__), "config.json")
-        history_path = os.path.join(os.path.dirname(__file__), "history.json")
+        config_dir = self._get_config_dir()
+        config_path = config_dir / "config.json"
+        history_path = config_dir / "history.json"
         
         # Save settings
         with open(config_path, "w") as f:
@@ -117,7 +136,7 @@ class HashtagGeneratorApp:
         self.root.title("Hashtag Generator")
         self.root.geometry("600x800")
         self.root.resizable(True, True)
-        icon_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'app_icon.ico'))
+        icon_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'icon.ico'))
         if os.path.exists(icon_path):
             self.root.iconbitmap(icon_path)
         else:
@@ -184,7 +203,7 @@ class HashtagGeneratorApp:
                                             variable=self.remove_special_var, command=self.update_settings)
         remove_special_cb.grid(row=0, column=0, sticky="w", padx=5, pady=2)
         
-        # New Capitalization control
+        # Capitalization control
         ttk.Label(settings_frame, text="Capitalization:").grid(row=1, column=0, sticky="w", padx=5, pady=2)
         self.capitalization_var = tk.StringVar(value=self.generator.settings.get("capitalization_mode", "first"))
         capitalization_combo = ttk.Combobox(settings_frame, textvariable=self.capitalization_var, 
@@ -192,11 +211,12 @@ class HashtagGeneratorApp:
         capitalization_combo.grid(row=1, column=1, sticky="w", padx=5, pady=2)
         capitalization_combo.bind("<<ComboboxSelected>>", self.update_settings)
         
-        # New Character Limit control
+        # Character Limit control
         ttk.Label(settings_frame, text="Character Limit:").grid(row=2, column=0, sticky="w", padx=5, pady=2)
-        self.character_limit_var = tk.IntVar(value=self.generator.settings.get("character_limit", 30))
-        character_limit_spinbox = tk.Spinbox(settings_frame, from_=1, to=100, textvariable=self.character_limit_var, width=5, command=self.update_settings)
+        self.character_limit_var = tk.IntVar(value=self.generator.settings.get("character_limit", 0))
+        character_limit_spinbox = tk.Spinbox(settings_frame, from_=0, to=100000, textvariable=self.character_limit_var, width=5, command=self.update_settings)
         character_limit_spinbox.grid(row=2, column=1, sticky="w", padx=5, pady=2)
+
         
         # Theme selection moved to next row
         theme_frame = ttk.Frame(settings_frame)
@@ -226,9 +246,20 @@ class HashtagGeneratorApp:
         status_bar.pack(side=tk.BOTTOM, fill=tk.X)
     
     def on_text_change(self, event=None):
-        """Real-time hashtag generation"""
-        if self.text_input.get("1.0", "end-1c").strip():
+        """Real-time hashtag generation with character limit enforcement."""
+        limit = self.generator.settings.get("character_limit", 0)
+        current_text = self.text_input.get("1.0", "end-1c")
+        if limit > 0 and len(current_text) > limit:
+            # Truncate the text to the limit
+            truncated_text = current_text[:limit]
+            # Replace text in widget (avoiding recursive events)
+            self.text_input.delete("1.0", tk.END)
+            self.text_input.insert("1.0", truncated_text)
+            self.status_var.set("Character limit reached!")
+        else:
+            # Continue to generate hashtag if text remains within the limit
             self.generate_hashtag()
+
     
     def generate_hashtag(self):
         """Generate hashtag from input text with delayed update for history handling"""

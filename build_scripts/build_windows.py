@@ -16,14 +16,13 @@ def build_windows():
         "pyinstaller",
         "--name=HashtagGenerator",
         "--windowed",
+        "--onefile",
         "--icon=assets/icons/app_icon.ico",
         "--add-data=assets;assets",
-        "src\gui\main.py"
+        "src/gui/main.py"
     ], check=True)
     
-    # Add version info and metadata
-    # Note: This requires pyinstaller-versionfile
-    # pip install pyinstaller-versionfile
+    # Add version info and metadata (requires pyinstaller-versionfile)
     version = get_version()
     subprocess.run([
         "python", "-m", "pyinstaller_versionfile",
@@ -43,7 +42,7 @@ def build_windows():
         "--icon=assets/icons/app_icon.ico",
         "--add-data=assets;assets",
         "--version-file=version_info.txt",
-        "src\gui\main.py"
+        "src/gui/main.py"
     ], check=True)
     
     print("Windows build completed successfully!")
