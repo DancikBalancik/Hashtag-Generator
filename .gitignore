@@ -1,0 +1,12 @@
+# Ignore venv
+venv/
+
+# Ignore the test folder
+test/
+
+# Ignore the build and dist folders
+build/
+dist/
+
+# Ignore any .spec file created by PyInstaller
+*.spec

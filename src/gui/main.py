@@ -9,15 +9,16 @@ class HashtagGenerator:
         # Initialize settings with defaults
         self.settings = {
             "remove_special_chars": False,
-            "capitalize_first_letter": True,
+            "capitalization_mode": "first",
             "history_max_items": 10,
-            "theme": "light"
+            "theme": "light",
+            "character_limit": 0
         }
         self.history = []
         self.load_settings()
     
     def generate_hashtag(self, text):
-        """Transform input text into a hashtag format"""
+        """Transform input text into a hashtag format based on settings"""
         if not text:
             return ""
             
@@ -25,20 +26,23 @@ class HashtagGenerator:
         if self.settings["remove_special_chars"]:
             text = ''.join(c for c in text if c.isalnum() or c.isspace())
         
-        # Capitalize first letter of each word if enabled
-        if self.settings["capitalize_first_letter"]:
+        # Apply capitalization mode based on setting
+        mode = self.settings.get("capitalization_mode", "first")
+        if mode == "first":
             text = text.title()
+        elif mode == "all_caps":
+            text = text.upper()
+        elif mode == "lowercase":
+            text = text.lower()
+        # If mode is "none", leave text unchanged
         
-        # Remove spaces
-        hashtag = text.replace(" ", "")
+        # Remove spaces and prepend hashtag symbol
+        hashtag = "#" + text.replace(" ", "")
         
-        # Add hashtag symbol
-        hashtag = f"#{hashtag}"
-        
-        # Add to history
+        # Add to history if not already present
         if hashtag not in self.history:
             self.history.insert(0, hashtag)
-            # Maintain max history size
+            # Maintain max history size based on settings (if needed, could use history_max_items)
             self.history = self.history[:self.settings["history_max_items"]]
             self.save_settings()  # Save history to file
         
@@ -62,7 +66,6 @@ class HashtagGenerator:
                 
         # Load history if exists, otherwise create an empty one
         if not os.path.exists(history_path):
-            # Create history file with empty list
             with open(history_path, "w") as f:
                 json.dump(self.history, f)
         else:
@@ -88,7 +91,6 @@ class HashtagGenerator:
     def import_from_file(self, filename="input.txt"):
         """Import text from file"""
         if not os.path.exists(filename):
-            # Create file if it doesn't exist
             with open(filename, "w") as f:
                 f.write("Enter text here")
             return "Enter text here"
@@ -150,19 +152,15 @@ class HashtagGeneratorApp:
         button_frame = ttk.Frame(self.main_frame)
         button_frame.pack(fill=tk.X, pady=10)
         
-        # Generate button
         generate_btn = ttk.Button(button_frame, text="Generate Hashtag", command=self.generate_hashtag)
         generate_btn.pack(side=tk.LEFT, padx=5)
         
-        # Copy button
         copy_btn = ttk.Button(button_frame, text="Copy Hashtag", command=self.copy_hashtag)
         copy_btn.pack(side=tk.LEFT, padx=5)
         
-        # Clear button
         clear_btn = ttk.Button(button_frame, text="Clear", command=self.clear_input)
         clear_btn.pack(side=tk.LEFT, padx=5)
         
-        # Import/Export buttons
         import_btn = ttk.Button(button_frame, text="Import", command=self.import_text)
         import_btn.pack(side=tk.RIGHT, padx=5)
         
@@ -173,7 +171,6 @@ class HashtagGeneratorApp:
         output_frame = ttk.LabelFrame(self.main_frame, text="Generated Hashtag", padding="10")
         output_frame.pack(fill=tk.X, pady=10)
         
-        # Hashtag output
         self.hashtag_output = ttk.Label(output_frame, text="#YourHashtagHere", font=("Times New Roman", 12))
         self.hashtag_output.pack(fill=tk.X, pady=5)
         
@@ -181,26 +178,33 @@ class HashtagGeneratorApp:
         settings_frame = ttk.LabelFrame(self.main_frame, text="Settings", padding="10")
         settings_frame.pack(fill=tk.X, pady=10)
         
-        # Settings options
+        # Remove special characters option
         self.remove_special_var = tk.BooleanVar(value=self.generator.settings["remove_special_chars"])
         remove_special_cb = ttk.Checkbutton(settings_frame, text="Remove Special Characters", 
-                                         variable=self.remove_special_var, command=self.update_settings)
+                                            variable=self.remove_special_var, command=self.update_settings)
         remove_special_cb.grid(row=0, column=0, sticky="w", padx=5, pady=2)
         
-        self.capitalize_var = tk.BooleanVar(value=self.generator.settings["capitalize_first_letter"])
-        capitalize_cb = ttk.Checkbutton(settings_frame, text="Capitalize First Letter of Each Word", 
-                                     variable=self.capitalize_var, command=self.update_settings)
-        capitalize_cb.grid(row=1, column=0, sticky="w", padx=5, pady=2)
+        # New Capitalization control
+        ttk.Label(settings_frame, text="Capitalization:").grid(row=1, column=0, sticky="w", padx=5, pady=2)
+        self.capitalization_var = tk.StringVar(value=self.generator.settings.get("capitalization_mode", "first"))
+        capitalization_combo = ttk.Combobox(settings_frame, textvariable=self.capitalization_var, 
+                                            values=["none", "first", "all_caps", "lowercase"], state="readonly", width=15)
+        capitalization_combo.grid(row=1, column=1, sticky="w", padx=5, pady=2)
+        capitalization_combo.bind("<<ComboboxSelected>>", self.update_settings)
         
-        # Theme selection
+        # New Character Limit control
+        ttk.Label(settings_frame, text="Character Limit:").grid(row=2, column=0, sticky="w", padx=5, pady=2)
+        self.character_limit_var = tk.IntVar(value=self.generator.settings.get("character_limit", 30))
+        character_limit_spinbox = tk.Spinbox(settings_frame, from_=1, to=100, textvariable=self.character_limit_var, width=5, command=self.update_settings)
+        character_limit_spinbox.grid(row=2, column=1, sticky="w", padx=5, pady=2)
+        
+        # Theme selection moved to next row
         theme_frame = ttk.Frame(settings_frame)
-        theme_frame.grid(row=2, column=0, sticky="w", padx=5, pady=2)
-        
+        theme_frame.grid(row=3, column=0, columnspan=2, sticky="w", padx=5, pady=2)
         ttk.Label(theme_frame, text="Theme:").pack(side=tk.LEFT, padx=(0, 5))
-        
         self.theme_var = tk.StringVar(value=self.generator.settings["theme"])
         theme_combo = ttk.Combobox(theme_frame, textvariable=self.theme_var, 
-                                values=["light", "dark"], state="readonly", width=10)
+                                   values=["light", "dark"], state="readonly", width=10)
         theme_combo.pack(side=tk.LEFT)
         theme_combo.bind("<<ComboboxSelected>>", self.update_settings)
         
@@ -208,20 +212,15 @@ class HashtagGeneratorApp:
         history_frame = ttk.LabelFrame(self.main_frame, text="History", padding="10")
         history_frame.pack(fill=tk.BOTH, expand=True, pady=10)
         
-        # History listbox
         self.history_listbox = tk.Listbox(history_frame, height=5)
         self.history_listbox.pack(fill=tk.BOTH, expand=True, side=tk.LEFT)
         
-        # Scrollbar for history
         scrollbar = ttk.Scrollbar(history_frame, orient="vertical", command=self.history_listbox.yview)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.history_listbox.config(yscrollcommand=scrollbar.set)
-        
-        # Configure history listbox
         self.history_listbox.bind('<<ListboxSelect>>', self.on_history_select)
         self.update_history_display()
         
-        # Status bar
         self.status_var = tk.StringVar(value="Ready")
         status_bar = ttk.Label(self.root, textvariable=self.status_var, relief=tk.SUNKEN, anchor=tk.W)
         status_bar.pack(side=tk.BOTTOM, fill=tk.X)
@@ -232,22 +231,23 @@ class HashtagGeneratorApp:
             self.generate_hashtag()
     
     def generate_hashtag(self):
-        """Generate hashtag from input text with delay for history update"""
+        """Generate hashtag from input text with delayed update for history handling"""
         def delayed_update():
             text = self.text_input.get("1.0", "end-1c").strip()
             if text:
                 hashtag = self.generator.generate_hashtag(text)
                 self.hashtag_output.config(text=hashtag)
                 self.update_history_display()
-                self.status_var.set("Hashtag generated")
+                # Check for character limit warning
+                if len(hashtag) > self.generator.settings["character_limit"]:
+                    self.status_var.set("Warning: Hashtag exceeds character limit!")
+                else:
+                    self.status_var.set("Hashtag generated")
             else:
                 self.status_var.set("Please enter some text")
         
-        # Cancel any existing scheduled update
         if hasattr(self, "_update_timer"):
             self.root.after_cancel(self._update_timer)
-        
-        # Schedule a new update after 0.8 second
         self._update_timer = self.root.after(800, delayed_update)
     
     def copy_hashtag(self):
@@ -284,7 +284,6 @@ class HashtagGeneratorApp:
             except Exception as e:
                 messagebox.showerror("Import Error", f"Error reading file: {str(e)}")
         else:
-            # Try default input.txt if no file selected
             text = self.generator.import_from_file()
             if text and text != "Error reading file":
                 self.text_input.delete("1.0", tk.END)
@@ -317,13 +316,15 @@ class HashtagGeneratorApp:
     def update_settings(self, event=None):
         """Update settings based on UI controls"""
         self.generator.settings["remove_special_chars"] = self.remove_special_var.get()
-        self.generator.settings["capitalize_first_letter"] = self.capitalize_var.get()
+        self.generator.settings["capitalization_mode"] = self.capitalization_var.get()
+        try:
+            self.generator.settings["character_limit"] = int(self.character_limit_var.get())
+        except ValueError:
+            self.generator.settings["character_limit"] = 30  # default fallback
         self.generator.settings["theme"] = self.theme_var.get()
         
         self.generator.save_settings()
         self.apply_theme()
-        
-        # Regenerate hashtag with new settings
         self.generate_hashtag()
         self.status_var.set("Settings updated")
     
@@ -365,7 +366,6 @@ class HashtagGeneratorApp:
             self.history_listbox.configure(bg="#3e3e3e", fg="white")
 
 if __name__ == "__main__":
-    # Create and initialize application
     root = tk.Tk()
     app = HashtagGeneratorApp(root)
     root.mainloop()
