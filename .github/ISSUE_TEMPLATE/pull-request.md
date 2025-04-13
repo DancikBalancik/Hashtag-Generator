@@ -13,17 +13,17 @@ assignees: ''
 - Why were these changes made?
 
 ### Type of Change
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to change)
-- [ ] Documentation update
+- [] Bug fix (non-breaking change which fixes an issue)
+- [] New feature (non-breaking change which adds functionality)
+- [] Breaking change (fix or feature that would cause existing functionality to change)
+- [] Documentation update
 
 ### Checklist
-- [ ] I have tested these changes locally
-- [ ] I have updated the documentation
-- [ ] I have added tests that prove my fix/feature
-- [ ] My code follows the project's coding style
-- [ ] I have performed a self-review of my own code
+- [] I have tested these changes locally
+- [] I have updated the documentation
+- [] I have added tests that prove my fix/feature
+- [] My code follows the project's coding style
+- [] I have performed a self-review of my own code
 
 ### Testing Instructions
 **Describe the steps to test this change:**

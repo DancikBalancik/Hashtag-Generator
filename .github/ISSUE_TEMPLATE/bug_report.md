@@ -42,9 +42,9 @@ What actually happened instead?
 
 ### Reproducibility
 
-- [ ] Always reproduces
-- [ ] Intermittent
-- [ ] Cannot reproduce consistently
+- [] Always reproduces
+- [] Intermittent
+- [] Cannot reproduce consistently
 
 ### Additional Context
 
@@ -56,7 +56,7 @@ Add any other context about the problem here.
 
 ### Severity and Impact
 
-- [ ] Critical (breaks core functionality)
-- [ ] High (significant functionality impaired)
-- [ ] Medium (minor functionality issues)
-- [ ] Low (cosmetic or minimal impact)
+- [] Critical (breaks core functionality)
+- [] High (significant functionality impaired)
+- [] Medium (minor functionality issues)
+- [] Low (cosmetic or minimal impact)

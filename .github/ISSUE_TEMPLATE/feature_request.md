@@ -34,12 +34,7 @@ Add any other context or screenshots about the feature request here.
 - Performance implications
 - Potential conflicts with existing functionality
 
-### Priority and Impact
-- [ ] High Priority
-- [ ] Medium Priority
-- [ ] Low Priority
-
 **Estimated Impact on User Experience:**
-- [ ] Critical improvement
-- [ ] Significant enhancement
-- [ ] Minor quality of life improvement
+- [] Critical improvement
+- [] Significant enhancement
+- [] Minor quality of life improvement
