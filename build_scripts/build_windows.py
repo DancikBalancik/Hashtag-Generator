@@ -17,6 +17,7 @@ def build_windows():
         "--name=HashtagGenerator",
         "--windowed",
         "--onefile",
+        "--noconsole",
         "--icon=assets/icons/app_icon.ico",
         "--add-data=assets;assets",
         "src/gui/main.py"
@@ -30,7 +31,7 @@ def build_windows():
         "--file-description", "A Hashtag Generator",
         "--product-name", "Hashtag Generator",
         "--company-name", "Hashtag Generator Project",
-        "--version-file", "version_info.txt"
+        "--version-file", "version.txt"
     ], check=True)
     
     # Rebuild with version info
@@ -41,7 +42,7 @@ def build_windows():
         "--windowed",
         "--icon=assets/icons/app_icon.ico",
         "--add-data=assets;assets",
-        "--version-file=version_info.txt",
+        "--version-file=version.txt",
         "src/gui/main.py"
     ], check=True)
     

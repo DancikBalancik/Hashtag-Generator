@@ -17,6 +17,7 @@ def build_linux():
         "--name=hashtag-generator",
         "--windowed",
         "--onefile",
+        "--noconsole",
         "--icon=assets/icons/app_icon.png",
         "--add-data=assets:assets",
         "src/gui/main.py"

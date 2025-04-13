@@ -18,6 +18,7 @@ def build_macos():
         "--name=HashtagGenerator",
         "--windowed",
         "--onefile",
+        "--noconsole",
         "--icon=assets/icons/app_icon.icns",
         "--add-data=assets:assets",
         "--osx-bundle-identifier=com.hashtaggenerator.app",
