@@ -18,6 +18,10 @@ Thank you for your interest in contributing to the Hashtag Generator App! As an 
 
 By participating in this project, you agree to maintain a respectful and inclusive environment for everyone. Please be kind and constructive in your communications and contributions.
 
+## API Key Storage
+
+API keys for LLM providers are stored only in browser localStorage and are never written to disk or committed to git. See `src/frontend/README_API_KEYS.md` for details.
+
 ## Getting Started
 
 1. **Fork the repository** on GitHub
@@ -41,7 +45,7 @@ By participating in this project, you agree to maintain a respectful and inclusi
    source venv/bin/activate
 
    # Install dependencies
-   pip install -r requirements.txt
+   pip install -r src/backend/requirements.txt
    ```
 
 4. **Create a new branch** for your work
@@ -49,6 +53,11 @@ By participating in this project, you agree to maintain a respectful and inclusi
    ```bash
    git checkout -b feature/your-feature-name
    ```
+
+## Requirements
+
+- Python: `src/backend/requirements.txt`
+- Node/React: `src/frontend/package.json`
 
 ## Development Process
 

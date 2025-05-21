@@ -1,9 +1,6 @@
 ---
 name: Bug report
 about: Create a report to help improve the Hashtag Generator
-title: "[BUG] "
-labels: bug
-assignees: lolyouprik
 ---
 
 ### Bug Description
@@ -32,6 +29,7 @@ What actually happened instead?
 - Python Version: [e.g., 3.8.5]
 - Hashtag Generator Version: [e.g., 0.1.0]
 - Installation Method: [e.g., pip, source code, executable]
+- **API keys are stored in browser localStorage, not in any file.**
 
 ### Error Logs and Screenshots
 

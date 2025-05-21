@@ -1,6 +1,6 @@
-# Hashtag Generator
+# Hashtag Generator Web App
 
-A powerful, open-source tool for transforming text into formatted hashtags with advanced customization options.
+This project uses a Python Flask backend and a React (Material UI) frontend.
 
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
 
@@ -11,48 +11,67 @@ A powerful, open-source tool for transforming text into formatted hashtags with 
 
 ## Project Overview
 
-The Hashtag Generator is an open-source application that transforms user input into hashtag-formatted text. It provides a clean, intuitive interface with customization options, file handling capabilities, and a history tracking system. Available in both GUI and CLI versions, the application is designed to be cross-platform, extensible, and community-driven.
+The Hashtag Generator is an open-source application that transforms user input into hashtag-formatted text. It provides a clean, intuitive interface with customization options, file handling capabilities, and a history tracking system. Available in both backend and frontend versions, the application is designed to be cross-platform, extensible, and community-driven.
+
+## Structure
+
+- `src/backend/` — Flask API (hashtag logic, AI providers)
+- `src/frontend/` — React app (modern UI, tabs, connects to backend)
 
 ## Features
 
-- **Instant Transformation**: Convert text to properly formatted hashtags in real-time
-- **Customization Options**: Control capitalization, special character handling, and more
-- **File Handling**: Import from and export to various file formats
-- **History Tracking**: Keep a record of previously generated hashtags
-- **Theming**: Switch between light and dark modes (with more themes coming soon)
-- **Cross-Platform**: Works on Windows, macOS, and Linux
-- **Local Storage**: Your data stays on your device
-- **Fully Open Source**: Modify and extend to suit your needs
+- **Hashtag Generator**: Convert text to properly formatted hashtags
+- **AI Hashtag Tab**: Generate hashtags using AI providers (OpenAI, Anthropic, Azure)
+- **Settings & History**: Customize and track your hashtag generation
+
+## API Key Storage
+
+API keys for LLM providers are stored **only in your browser's localStorage** (see `src/frontend/README_API_KEYS.md`). They are never written to disk or sent to the backend server.
 
 ## Installation
 
-### Prerequisites
-
-- Python 3.7 or higher
-- Tkinter (included in standard Python installation)
-
-### Cloning the repository
+### Backend
 
 ```bash
-# Clone the repository
-git clone https://github.com/DancikBalancik/Hashtag-Generator.git
-cd Hashtag Generator
-
-# Install dependencies
+cd src/backend
 pip install -r requirements.txt
-
-# Run the application
-python src/gui/main.py
-
-# For the CLI version run
-python src/cli/cli_app.py
+python app.py
 ```
+
+```powershell
+cd src/backend
+pip install -r requirements.txt
+python app.py
+```
+
+### Frontend
+
+```bash
+cd src/frontend
+npm install
+npm start
+```
+
+```powershell
+cd src/frontend
+npm install
+npm start
+```
+
+## App Icon
+
+The app icon is located at `src/frontend/public/app_icon.png` and is used for the PWA/Electron app manifest.
+
+## Requirements
+
+- Python requirements: `src/backend/requirements.txt`
+- Node/React requirements: `src/frontend/package.json`
 
 ## Basic Usage
 
-1. Enter your text in the input field
-2. The hashtag is generated automatically as you type
-3. Use the "Copy" button to copy the hashtag to your clipboard
+1. Start the backend server using Flask
+2. Start the frontend React application
+3. Use the modern UI to generate and manage hashtags
 
 ## Advanced Features
 
@@ -81,13 +100,16 @@ We welcome contributions from the community! Please see our [Contributing Guidel
 ### Development Setup
 
 ```bash
-# Create a virtual environment
+# Backend
+cd src/backend
 python -m venv venv
 source venv/bin/activate  # On Linux and MacOS
 venv\Scripts\activate  # On Windows
-
-# Install dependencies
 pip install -r requirements.txt
+
+# Frontend
+cd src/frontend
+npm install
 ```
 
 > Please update any dependencies if changes are made
@@ -95,6 +117,10 @@ pip install -r requirements.txt
 ## Project Roadmap
 
 View our full [Development Roadmap](ROADMAP.md) to see what's planned for future releases.
+
+## Cleaning Up
+
+Old CLI and GUI code is deprecated and can be removed.
 
 ## Support Me
 
