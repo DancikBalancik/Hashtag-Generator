@@ -1,43 +1,12 @@
-# Python virtual environments
+# Ignore venv
 venv/
 
-# Node/React dependencies
-node_modules/
-
-# Test folders
-__pycache__/
+# Ignore the test folder
 test/
-coverage/
 
-# Build and distribution folders
+# Ignore the build and dist folders
 build/
 dist/
 
-# PyInstaller spec files
+# Ignore any .spec file created by PyInstaller
 *.spec
-
-# Environment and sensitive files
-.env
-.env.*
-src/frontend/.env
-src/frontend/.env.*
-
-# Log files
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# OS-specific files
-.DS_Store
-Thumbs.db
-
-# Editor/project files
-.vscode/
-.idea/
-
-# package-lock.json
-package-lock.json
-
-# API keys for the frontend are stored only in browser localStorage (not on disk)
-# No API key files are written to disk by the app
